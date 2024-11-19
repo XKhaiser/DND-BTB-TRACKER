@@ -1,14 +1,15 @@
 document.getElementById('dataForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-  
-    const value = e.target.elements.data.value;
-  
-    const response = await fetch('/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ value })
-    });
-  
-    const result = await response.json();
-    document.getElementById('response').innerText = `Dato salvato con ID: ${result.id}`;
+  e.preventDefault();
+
+  const username = e.target.elements.username.value;
+  const email = e.target.elements.email.value;
+  const password = e.target.elements.password_hash.value;
+
+  const response = await fetch('/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, email, password })
   });
+
+  const result = await response.json();
+});
