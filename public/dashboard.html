@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1 id="welcomeMessage"></h1>
+  <p id="dashboardContent"></p>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const username = localStorage.getItem('username');
+      const role = localStorage.getItem('role');
+      const isMaster = localStorage.getItem('isMaster') === 'true';
+
+      document.getElementById('welcomeMessage').textContent = `Benvenuto, ${username}!`;
+
+      if (isMaster) {
+        document.getElementById('dashboardContent').textContent = 'Sei connesso come Master.';
+      } else {
+        document.getElementById('dashboardContent').textContent = 'Sei connesso come Giocatore.';
+      }
+    });
+  </script>
+</body>
+</html>
