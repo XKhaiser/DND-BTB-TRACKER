@@ -21,27 +21,23 @@ const db = new sqlite3.Database('./data.db', (err) => {
 
 // Endpoint per salvare i dati
 app.post('/submit', async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
 
-  // Controllo che i campi obbligatori siano forniti
-  if (!username || !email || !password) {
-    return res.status(400).json({ error: "Username, email e password sono richiesti." });
+  if (!username || !password) {
+    return res.status(400).json({ error: "Username e password sono richiesti." });
   }
 
   try {
-    // Hash della password
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Inserimento nel database
     db.run(
-      `INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)`,
-      [username, email, hashedPassword],
+      `INSERT INTO users (username, password_hash) VALUES (?, ?)`,
+      [username, hashedPassword],
       function (err) {
         if (err) {
           res.status(500).json({ error: err.message });
         } else {
-          res.json({ id: this.lastID, username, email });
+          res.json({ id: this.lastID, username });
         }
       }
     );
@@ -50,17 +46,14 @@ app.post('/submit', async (req, res) => {
   }
 });
 
-// Endpoint per il login
 app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  // Controllo che i campi obbligatori siano forniti
-  if (!email || !password) {
-    return res.status(400).json({ error: "Email e password sono richiesti." });
+  if (!username || !password) {
+    return res.status(400).json({ error: "Username e password sono richiesti." });
   }
 
-  // Cerca l'utente nel database
-  db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
+  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Errore del server.' });
     }
@@ -69,16 +62,18 @@ app.post('/login', async (req, res) => {
       return res.status(404).json({ error: 'Utente non trovato.' });
     }
 
-    // Confronta la password fornita con quella hashata nel database
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Credenziali non valide.' });
     }
 
-    // Login riuscito
-    res.status(200).json({ message: 'Login effettuato con successo!', user: { id: user.id, username: user.username, email: user.email } });
+    res.status(200).json({
+      message: 'Login effettuato con successo!',
+      user: { id: user.id, username: user.username, role: user.role, isMaster: user.role === 'master' }
+    });
   });
 });
+
 
 
 
