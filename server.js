@@ -50,6 +50,37 @@ app.post('/submit', async (req, res) => {
   }
 });
 
+// Endpoint per il login
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Controllo che i campi obbligatori siano forniti
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email e password sono richiesti." });
+  }
+
+  // Cerca l'utente nel database
+  db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Errore del server.' });
+    }
+
+    if (!user) {
+      return res.status(404).json({ error: 'Utente non trovato.' });
+    }
+
+    // Confronta la password fornita con quella hashata nel database
+    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Credenziali non valide.' });
+    }
+
+    // Login riuscito
+    res.status(200).json({ message: 'Login effettuato con successo!', user: { id: user.id, username: user.username, email: user.email } });
+  });
+});
+
+
 
 // Avvio del server
 app.listen(port, () => {
