@@ -1,7 +1,9 @@
+require('dotenv').config(); // Carica le variabili di ambiente
+
+const { Pool } = require('pg');
+const bcrypt = require('bcrypt');
 const express = require('express');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
 
 const app = express();
 const port = 3000;
@@ -10,14 +12,33 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// Database setup
-const db = new sqlite3.Database('./data.db', (err) => {
-  if (err) console.error(err.message);
-  else console.log('Connected to the SQLite database.');
+// Configurazione PostgreSQL usando le variabili di ambiente
+const pool = new Pool({
+  user: process.env.DB_USER,         // Variabile di ambiente
+  host: process.env.DB_HOST,         // Variabile di ambiente
+  database: process.env.DB_DATABASE, // Variabile di ambiente
+  password: process.env.DB_PASSWORD, // Variabile di ambiente
+  port: process.env.DB_PORT,         // Variabile di ambiente
 });
 
-// Crea la tabella se non esiste
-// db.run(`CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY, value TEXT)`);
+// Crea la tabella se non esiste (da eseguire manualmente in PostgreSQL o come script)
+const createTable = async () => {
+  const client = await pool.connect();
+  try {
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        username TEXT UNIQUE NOT NULL,
+        password_hash TEXT NOT NULL,
+        role TEXT DEFAULT 'user'
+      );
+    `);
+  } finally {
+    client.release();
+  }
+};
+
+createTable(); // Crea la tabella all'avvio del server
 
 // Endpoint per salvare i dati
 app.post('/submit', async (req, res) => {
@@ -30,22 +51,23 @@ app.post('/submit', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    db.run(
-      `INSERT INTO users (username, password_hash) VALUES (?, ?)`,
-      [username, hashedPassword],
-      function (err) {
-        if (err) {
-          res.status(500).json({ error: err.message });
-        } else {
-          res.json({ id: this.lastID, username });
-        }
-      }
-    );
+    const client = await pool.connect();
+    try {
+      const result = await client.query(
+        `INSERT INTO users (username, password_hash) VALUES ($1, $2) RETURNING id, username`,
+        [username, hashedPassword]
+      );
+      const user = result.rows[0];
+      res.json({ id: user.id, username: user.username });
+    } finally {
+      client.release();
+    }
   } catch (error) {
     res.status(500).json({ error: "Errore durante l'hashing della password." });
   }
 });
 
+// Endpoint per il login
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
@@ -53,10 +75,10 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ error: "Username e password sono richiesti." });
   }
 
-  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
-    if (err) {
-      return res.status(500).json({ error: 'Errore del server.' });
-    }
+  const client = await pool.connect();
+  try {
+    const result = await client.query('SELECT * FROM users WHERE username = $1', [username]);
+    const user = result.rows[0];
 
     if (!user) {
       return res.status(404).json({ error: 'Utente non trovato.' });
@@ -71,11 +93,12 @@ app.post('/login', async (req, res) => {
       message: 'Login effettuato con successo!',
       user: { id: user.id, username: user.username, role: user.role, isMaster: user.role === 'master' }
     });
-  });
+  } catch (err) {
+    return res.status(500).json({ error: 'Errore del server.' });
+  } finally {
+    client.release();
+  }
 });
-
-
-
 
 // Avvio del server
 app.listen(port, () => {
