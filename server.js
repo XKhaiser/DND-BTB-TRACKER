@@ -19,6 +19,7 @@ const pool = new Pool({
   database: process.env.DB_DATABASE, // Variabile di ambiente
   password: process.env.DB_PASSWORD, // Variabile di ambiente
   port: process.env.DB_PORT,         // Variabile di ambiente
+  ssl: true
 });
 
 // Crea la tabella se non esiste (da eseguire manualmente in PostgreSQL o come script)
