@@ -7,11 +7,11 @@
   <title>Login e Registrazione</title>
 </head>
 
-<body style="display: none;">
+<body style="display: none;" id="login">
   <div class="container mt-5">
     <ul class="nav nav-tabs" id="authTabs" role="tablist">
       <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button"
+        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#loginTab" type="button"
           role="tab" aria-controls="login" aria-selected="true">Login</button>
       </li>
       <li class="nav-item" role="presentation">
@@ -21,7 +21,7 @@
     </ul>
     <div class="tab-content mt-4" id="authTabsContent">
       <!-- Login Form -->
-      <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+      <div class="tab-pane fade show active" id="loginTab" role="tabpanel" aria-labelledby="login-tab">
         <form id="loginForm">
           <div class="mb-3">
             <label for="loginUsername" class="form-label">Username</label>
@@ -57,7 +57,24 @@
   <div id="messageContainer" style="margin-top: 20px;"></div>
 
   <script src="src/js/Elements.js"></script>
-  <script src="src/js/Registrazione.js"></script>
+  <script>
+    var paginaJS = "src/js/Registrazione.js"
+
+    var c = document.createDocumentFragment();
+    var newscript = document.createElement('script');
+    newscript.type = 'text/javascript';
+    newscript.async = false;
+    newscript.defer = false;
+    newscript.src = paginaJS;
+    
+    newscript.onload = function() {
+        var dashboard = new Dashboard();
+        dashboard.mostraDashboard();
+    };
+
+    c.appendChild(newscript);
+    document.body.appendChild(c);
+  </script>
 </body>
 
 </html>

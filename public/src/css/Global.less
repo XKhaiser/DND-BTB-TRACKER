@@ -1,7 +1,24 @@
 body {
     font-family:Arial,sans-serif;
-    margin:2rem;
     text-align:center;
+    background: url('https://www.wallpapers13.com/wp-content/uploads/2015/05/Dungeons-and-Dragons-HD-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    height: 100dvh;
+    max-height: 100dvh;
+
+    .wrapper {
+        display: flex;
+        margin: 0;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: clip;
+        flex-direction: column;
+
+        > section {
+            flex: 1;
+        }
+    }
 }
 
 .message {
