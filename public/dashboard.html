@@ -10,15 +10,12 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">D&D Dashboard</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler sidebar-toggler d-block me-4" type="button" aria-label="Toggle sidebar">
           <span class="navbar-toggler-icon"></span>
         </button>
+        <a class="navbar-brand" href="#">D&D Dashboard</a>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" id="navRole">Ruolo</a>
-            </li>
             <li class="nav-item">
               <a class="nav-link" href="#" id="logout">Logout</a>
             </li>
@@ -26,11 +23,10 @@
         </div>
       </div>
     </nav>
-
+    
     <section id="page" class="d-flex flex-row">
-      <div id="sidebar" class="bg-dark text-white p-3" style="width: 250px;">
-        <h4 class="mb-4 text-center">D&D Dashboard</h4>
-        <ul class="nav flex-column">
+      <div id="sidebar" class="bg-dark text-white p-3" style="min-width: 250px;">
+        <ul class="nav flex-column text-start">
           <li class="nav-item mb-2">
             <a href="#characters" class="nav-link text-white">
               <i class="bi bi-people"></i> Personaggi
@@ -53,10 +49,11 @@
           </li>
         </ul>
       </div>
-      <div id="page-content" class="w-100">
-
+      <div id="page-content" class="w-100 bg-white">
+        <!-- Contenuto della pagina -->
       </div>
     </section>
+    
   </div>
 
   <script src="src/js/Elements.js"></script>

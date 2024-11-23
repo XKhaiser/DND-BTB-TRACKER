@@ -1,5 +1,9 @@
 $(function() {
     $("body").fadeIn();
+
+    $(".sidebar-toggler").off("click").on("click", function() {
+        $("#page-content").toggleClass("full");
+    })
 });
 
 checkLogin();

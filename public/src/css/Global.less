@@ -17,6 +17,15 @@ body {
 
         > section {
             flex: 1;
+
+            #page-content {
+                z-index: 4;
+                transition: margin .5s;
+
+                &.full {
+                    margin-left: -250px;
+                }
+            }
         }
     }
 }
