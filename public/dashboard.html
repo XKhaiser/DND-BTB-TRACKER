@@ -5,26 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
 </head>
-<body style="display: none;">
-  <h1 id="welcomeMessage"></h1>
-  <p id="dashboardContent"></p>
+<body style="display: none" class="m-0">
+  <div class="wrapper">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <button class="navbar-toggler sidebar-toggler d-block me-4" type="button" aria-label="Toggle sidebar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">D&D Dashboard</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" id="logout">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <section id="page" class="d-flex flex-row">
+      <div id="sidebar" class="bg-dark text-white p-3" style="min-width: 250px;">
+        <ul class="nav flex-column text-start">
+          <li class="nav-item mb-2">
+            <a href="#characters" class="nav-link text-white">
+              <i class="bi bi-people"></i> Personaggi
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="#missions" class="nav-link text-white">
+              <i class="bi bi-list-task"></i> Missioni
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="#inventory" class="nav-link text-white">
+              <i class="bi bi-box"></i> Inventario
+            </a>
+          </li>
+          <li class="nav-item mb-2">
+            <a href="#settings" class="nav-link text-white">
+              <i class="bi bi-gear"></i> Impostazioni
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div id="page-content" class="w-100 bg-white">
+        <!-- Contenuto della pagina -->
+      </div>
+    </section>
+    
+  </div>
 
   <script src="src/js/Elements.js"></script>
-
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const username = localStorage.getItem('username');
-      const role = localStorage.getItem('role');
-      const isMaster = localStorage.getItem('isMaster') === 'true';
+    var paginaJS = "src/js/Dashboard.js"
 
-      document.getElementById('welcomeMessage').textContent = `Benvenuto, ${username}!`;
+    var c = document.createDocumentFragment();
+    var newscript = document.createElement('script');
+    newscript.type = 'text/javascript';
+    newscript.async = false;
+    newscript.defer = false;
+    newscript.src = paginaJS;
+    
+    newscript.onload = function() {
+        var dashboard = new Dashboard();
+        dashboard.mostraDashboard();
+    };
 
-      if (isMaster) {
-        document.getElementById('dashboardContent').textContent = 'Sei connesso come Master.';
-      } else {
-        document.getElementById('dashboardContent').textContent = 'Sei connesso come Giocatore.';
-      }
-    });
+    c.appendChild(newscript);
+    document.body.appendChild(c);
   </script>
 </body>
 </html>
