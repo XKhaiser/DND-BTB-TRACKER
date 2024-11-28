@@ -21,6 +21,7 @@ module.exports = { pool };
 
 const LoginHandler = require('./public/src/js/Handlers/LoginHandler');
 const RegistrazioneHandler = require('./public/src/js/Handlers/RegistrazioneHandler');
+const CharacterHandler = require('./public/src/js/Handlers/CharactersHandler');
 
 // Middleware
 app.use(bodyParser.json());
@@ -29,6 +30,7 @@ app.use(express.static('public'));
 // Creazione delle istanze degli handler
 const registrazioneHandler = new RegistrazioneHandler();
 const loginHandler = new LoginHandler();
+const characterHandler = new CharacterHandler();
 
 // Endpoint Generico per l'azione
 app.post('/action', async (req, res) => {
@@ -47,6 +49,11 @@ app.post('/action', async (req, res) => {
       case 'register':
         result = await registrazioneHandler.registerUser(params.username, params.password);
         res.status(200).json({ message: 'Registrazione completata con successo!', user: result });
+        break;
+
+      case 'getUserCharacters':
+        result = await characterHandler.getUserCharacters(params.currentUserID);
+        res.status(200).json({ message: 'Lista personaggi per utente corrente', data: result });
         break;
 
       default:

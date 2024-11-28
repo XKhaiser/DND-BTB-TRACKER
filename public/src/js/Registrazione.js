@@ -37,10 +37,11 @@ Login.prototype.mostraLogin = function () {
       } else {
         showMessage('messageContainer', result.message, 'success');
 
-        const { username, role, isMaster } = result.user;
+        const { username, role, isMaster, id } = result.user;
         localStorage.setItem('username', username);
         localStorage.setItem('role', role);
         localStorage.setItem('isMaster', isMaster);
+        localStorage.setItem('idUser', id)
 
         setTimeout(() => {
           window.location.href = '/dashboard.html';

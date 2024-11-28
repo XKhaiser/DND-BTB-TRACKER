@@ -1,54 +1,53 @@
-// Funzione costruttrice per il CharacterHandler
-function CharacterHandler() {}
+const { pool } = require('../../../../server');
 
-// Aggiungi un metodo al prototipo di CharacterHandler
-CharacterHandler.prototype.getCharactersByPersonId = async function (idPersona) {
-    try {
-        const response = await fetch(`/api/characters/person/${idPersona}`, { method: 'GET' });
-        if (!response.ok) {
+class CharacterHandler {
+    // Metodo per ottenere i personaggi associati a un ID persona
+    async getUserCharacters(idPersona) {
+        const client = await pool.connect();
+        try {
+            const result = await client.query('SELECT * FROM characters WHERE user_id = $1', [idPersona]);
+            return result.rows;
+        } catch (error) {
+            console.error('Error fetching characters:', error);
             throw new Error('Failed to fetch characters');
+        } finally {
+            client.release();
         }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching characters:', error);
-        return null;
     }
-};
 
-// Aggiungi un altro metodo al prototipo per ottenere un singolo personaggio
-CharacterHandler.prototype.getCharacterById = async function (idCharacter) {
-    try {
-        const response = await fetch(`/api/characters/${idCharacter}`, { method: 'GET' });
-        if (!response.ok) {
+    // Metodo per ottenere un singolo personaggio tramite ID
+    async getCharacterById(idCharacter) {
+        const client = await pool.connect();
+        try {
+            const result = await client.query('SELECT * FROM characters WHERE id = $1', [idCharacter]);
+            if (result.rows.length === 0) {
+                throw new Error('Character not found');
+            }
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error fetching character:', error);
             throw new Error('Failed to fetch character data');
+        } finally {
+            client.release();
         }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching character:', error);
-        return null;
     }
-};
 
-// Aggiungi un altro metodo per creare un personaggio
-CharacterHandler.prototype.createCharacter = async function (characterData) {
-    try {
-        const response = await fetch(`/api/characters`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(characterData),
-        });
-        if (!response.ok) {
+    // Metodo per creare un nuovo personaggio
+    async createCharacter(characterData) {
+        const client = await pool.connect();
+        try {
+            const result = await client.query(
+                `INSERT INTO characters (name, class, user_id) VALUES ($1, $2, $3) RETURNING *`,
+                [characterData.name, characterData.class, characterData.userID]
+            );
+            return result.rows[0];
+        } catch (error) {
+            console.error('Error creating character:', error);
             throw new Error('Failed to create character');
+        } finally {
+            client.release();
         }
-        return await response.json();
-    } catch (error) {
-        console.error('Error creating character:', error);
-        return null;
     }
-};
+}
 
-// Aggiungi metodi aggiuntivi in modo simile
-// ...
-
-// Esportazione della funzione costruttrice
-export default CharacterHandler;
+module.exports = CharacterHandler;
