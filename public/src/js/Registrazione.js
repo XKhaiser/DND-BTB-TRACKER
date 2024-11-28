@@ -24,10 +24,10 @@ Login.prototype.mostraLogin = function () {
     const password = document.getElementById('loginPassword').value;
 
     try {
-      const response = await fetch('/login', {
+      const response = await fetch('/action', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ action: 'login', username, password })
       });
 
       const result = await response.json();
@@ -37,10 +37,11 @@ Login.prototype.mostraLogin = function () {
       } else {
         showMessage('messageContainer', result.message, 'success');
 
-        const { username, role, isMaster } = result.user;
+        const { username, role, isMaster, id } = result.user;
         localStorage.setItem('username', username);
         localStorage.setItem('role', role);
         localStorage.setItem('isMaster', isMaster);
+        localStorage.setItem('idUser', id)
 
         setTimeout(() => {
           window.location.href = '/dashboard.html';
@@ -50,58 +51,43 @@ Login.prototype.mostraLogin = function () {
       console.error('Errore:', error);
       showMessage('messageContainer', 'Si è verificato un errore. Riprova più tardi.', 'error');
     }
-  
-    // Signup form handler
-    document.getElementById('signupForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-  
-      const username = document.getElementById('signupUsername').value;
-      const password = document.getElementById('signupPassword').value;
-      const confirmPassword = document.getElementById('signupConfirmPassword').value;
-  
-      if (password !== confirmPassword) {
-        showMessage('messageContainer', 'Le password non coincidono.', 'error');
-        return;
-      }
-  
-      if (password.length < 8) {
-        showMessage('messageContainer', 'La password deve avere almeno 8 caratteri.', 'error');
-        return;
-      }
-  
-      try {
-        const response = await fetch('/submit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-  
-        const result = await response.json();
-  
-        if (result.error) {
-          showMessage('messageContainer', `Errore: ${result.error}`, 'error');
-        } else {
-          showMessage('messageContainer', 'Registrazione completata con successo!', 'success');
-        }
-      } catch (error) {
-        console.error('Errore:', error);
-        showMessage('messageContainer', 'Si è verificato un errore. Riprova più tardi.', 'error');
-      }
-    });
   });
   
+  // Signup form handler
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
   
-  function showMessage(containerId, message, type = 'success') {
-    const container = document.getElementById(containerId);
-    container.innerHTML = `
-      <div class="message ${type}">
-        ${message}
-      </div>
-    `;
+    const username = document.getElementById('signupUsername').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
   
-    // Rimuovi il messaggio dopo 5 secondi
-    setTimeout(() => {
-      container.innerHTML = '';
-    }, 5000);
-  }
+    if (password !== confirmPassword) {
+      showMessage('messageContainer', 'Le password non coincidono.', 'error');
+      return;
+    }
+  
+    if (password.length < 8) {
+      showMessage('messageContainer', 'La password deve avere almeno 8 caratteri.', 'error');
+      return;
+    }
+  
+    try {
+      const response = await fetch('/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'register', username, password })
+      });
+  
+      const result = await response.json();
+  
+      if (result.error) {
+        showMessage('messageContainer', `Errore: ${result.error}`, 'error');
+      } else {
+        showMessage('messageContainer', result.message, 'success');
+      }
+    } catch (error) {
+      console.error('Errore:', error);
+      showMessage('messageContainer', 'Si è verificato un errore. Riprova più tardi.', 'error');
+    }
+  });
 };

@@ -4,6 +4,12 @@ $(function() {
     $(".sidebar-toggler").off("click").on("click", function() {
         $("#page-content").toggleClass("full");
     })
+
+    var user = {
+        nome: localStorage.getItem("username")
+    }
+
+    $("#userMenu > span").html(user.nome);
 });
 
 checkLogin();
@@ -15,3 +21,8 @@ function checkLogin() {
         }
     }
 }
+
+$("#logout").off("click").on("click", function() {
+    localStorage.clear();
+    checkLogin();
+})
