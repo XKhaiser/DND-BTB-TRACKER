@@ -55,8 +55,7 @@ Dashboard.prototype.mostraPersonaggi = async function() {
             </div>
         `;
         htmlContent += addCardHtml;
-
-        $('#pg-list').append(htmlContent);
+        $('#pg-list').html(htmlContent);
 
         $('#addCharacterBtn').on('click', function() {
             _this.createCharacter()
@@ -105,12 +104,13 @@ Dashboard.prototype.saveCharacter = async function (character, modal) {
         const response = await fetch('/action', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'createCharacter', character })
+            body: JSON.stringify({ action: 'createCharacter', character, currentUserID })
         });
   
         const result = await response.json();
 
         console.log(result);
+        _this.mostraPersonaggi();
         modal.hide();
       } catch (error) {
         console.error('Errore:', error);

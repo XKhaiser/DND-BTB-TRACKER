@@ -26,4 +26,3 @@ class LoginHandler {
 }
 
 module.exports = LoginHandler;
-  

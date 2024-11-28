@@ -43,9 +43,7 @@ Login.prototype.mostraLogin = function () {
         localStorage.setItem('isMaster', isMaster);
         localStorage.setItem('idUser', id)
 
-        setTimeout(() => {
-          window.location.href = '/dashboard.html';
-        }, 2000);
+        window.location.href = '/dashboard.html';
       }
     } catch (error) {
       console.error('Errore:', error);
@@ -84,6 +82,7 @@ Login.prototype.mostraLogin = function () {
         showMessage('messageContainer', `Errore: ${result.error}`, 'error');
       } else {
         showMessage('messageContainer', result.message, 'success');
+        window.location.href = '/dashboard.html';
       }
     } catch (error) {
       console.error('Errore:', error);
