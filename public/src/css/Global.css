@@ -7,8 +7,7 @@ body .wrapper {
   display: flex;
   margin: 0;
   height: 100%;
-  overflow-y: auto;
-  overflow-x: clip;
+  overflow: hidden;
   flex-direction: column;
 }
 body .wrapper > section {
@@ -18,9 +17,19 @@ body .wrapper > section #page-content {
   z-index: 4;
   transition: margin 0.5s;
   padding: 2rem;
+  height: calc(100dvh - 72px);
+  overflow: auto;
 }
 body .wrapper > section #page-content.full {
   margin-left: -250px;
+}
+body .wrapper > section #page-content .choices.choice-pg-select {
+  width: 25%;
+}
+body .wrapper > section #page-content .choices.choice-pg-select .choices__list.choices__list--dropdown .choices__item[data-value="-1"] {
+  cursor: auto !important;
+  background: #0001;
+  color: #0007;
 }
 .message {
   padding: 10px;

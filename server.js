@@ -56,6 +56,21 @@ app.post('/action', async (req, res) => {
         res.status(200).json({ message: 'Lista personaggi per utente corrente', data: result });
         break;
 
+      case 'getCharacterByIdWithStats':
+        result = await characterHandler.getCharacterById(params.id);
+        res.status(200).json({ message: 'Lista personaggi per utente corrente', data: result });
+        break;
+
+      case 'createCharacter':
+        result = await characterHandler.createCharacter(params.character, params.currentUserID);
+        res.status(200).json({ message: 'Lista personaggi per utente corrente', data: result });
+        break;
+
+      case 'modificaStatsCharacter':
+        result = await characterHandler.modificaStatsCharacter(params.characterStats, params.character_id);
+        res.status(200).json({ message: 'Lista personaggi per utente corrente', data: result });
+        break;
+
       default:
         res.status(400).json({ error: 'Azione non riconosciuta.' });
         break;

@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
+  <!-- Include base CSS (optional) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/base.min.css"
+  />
+  <!-- Include Choices CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"
+  />
 </head>
 <body style="display: none" class="m-0">
   <div class="wrapper">
@@ -60,62 +70,91 @@
       </div>
       <div id="page-content" class="w-100 bg-white">
         <!-- Contenuto della pagina -->
-         <h1 id="welcomeMsg"></h1>
-         <h3 id="userTypeMsg"></h3>
-         <div id="user-section">
-          <div class="d-flex gap-4 align-items-center" id="pg-list">
-
+        <div class="load-page h-100">
+          <div class="d-flex justify-content-center align-items-center h-100 flex-column">
+            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
           </div>
-         </div>
+        </div>
+        <div id="startCharacter" class="h-100" style="display: none;">
+          <div class="d-flex justify-content-center align-items-center h-100 flex-column">
+            <label>Seleziona un personaggio da modificare</label>
+            <select id="pg-select" class="form-control w-50" data-placeholder="Seleziona un personaggio"></select>
+            <hr class="w-50" />
+            <label>Oppure creane uno nuovo</label>
+            <button class="btn btn-primary" id="newPg">Nuovo</button>
+          </div>
+        </div>
+
+        <div id="containerFormCharacter" style="display:none;">
+          <button class="btn btn-secondary mb-3" id="characterMenu">Indietro</button>
+          <form id="createCharacterForm" onsubmit="return false;">
+              <div class="row row-cols-2">
+                  <div class="mb-3">
+                  <label for="characterName" class="form-label">Nome</label>
+                  <input type="text" class="form-control" id="characterName" required>
+                  </div>
+                  <div class="mb-3">
+                  <label for="characterClass" class="form-label">Classe</label>
+                  <input type="text" class="form-control" id="characterClass" required>
+                  </div>
+                  <div class="mb-3">
+                  <label for="characterLevel" class="form-label">Livello</label>
+                  <input type="number" class="form-control" id="characterLevel" min="1" max="20" value="1" onkeyup="if(value>20) value=20;" required>
+                  </div>
+                  <div class="mb-3">
+                  <label for="characterRace" class="form-label">Razza</label>
+                  <input type="text" class="form-control" id="characterRace" required>
+                  </div>
+                  <div class="mb-3">
+                  <label for="characterAlignment" class="form-label">Allineamento</label>
+                  <input type="text" class="form-control" id="characterAlignment" required>
+                  </div>
+              </div>
+
+              <hr>
+
+              <div class="row row-cols-6">
+                  <div class="mb-3">
+                      <label for="characterName" class="form-label">Forza</label>
+                      <input type="number" class="form-control" id="characterStrength" min="1" max="20" value="8" onkeyup="if(value>20) value=20;" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="characterClass" class="form-label">Destrezza</label>
+                      <input type="number" class="form-control" id="characterDexterity" min="1" max="20" value="8" onkeyup="if(value>20) value=20;" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="characterLevel" class="form-label">Intelligenza</label>
+                      <input type="number" class="form-control" id="characterIntelligence" min="1" max="20" value="8" onkeyup="if(value>20) value=20;" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="characterRace" class="form-label">Saggezza</label>
+                      <input type="number" class="form-control" id="characterWisdom" min="1" max="20" value="8" onkeyup="if(value>20) value=20;" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="characterAlignment" class="form-label">Costituzione</label>
+                      <input type="number" class="form-control" id="characterConstitution" min="1" max="20" value="8" onkeyup="if(value>20) value=20;" required>
+                  </div>
+                  <div class="mb-3">
+                      <label for="characterAlignment" class="form-label">Carisma</label>
+                      <input type="number" class="form-control" id="characterCharisma" min="1" max="20" value="8" onkeyup="if(value>20) value=20;" required>
+                  </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Crea Personaggio</button>
+          </form>
+        </div>
       </div>
     </section>
     
   </div>
 
-  <div class="modal fade" id="createCharacterModal" tabindex="-1" aria-labelledby="createCharacterModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="createCharacterModalLabel">Crea Nuovo Personaggio</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Chiudi"></button>
-        </div>
-        <div class="modal-body">
-          <form id="createCharacterForm">
-            <div class="mb-3">
-              <label for="characterName" class="form-label">Nome</label>
-              <input type="text" class="form-control" id="characterName" required>
-            </div>
-            <div class="mb-3">
-              <label for="characterClass" class="form-label">Classe</label>
-              <input type="text" class="form-control" id="characterClass" required>
-            </div>
-            <div class="mb-3">
-              <label for="characterLevel" class="form-label">Livello</label>
-              <input type="number" class="form-control" id="characterLevel" min="1" max="20" value="1" onkeyup="if(value>20) value=20;" required>
-            </div>
-            <div class="mb-3">
-              <label for="characterRace" class="form-label">Razza</label>
-              <input type="text" class="form-control" id="characterRace" required>
-            </div>
-            <div class="mb-3">
-              <label for="characterAlignment" class="form-label">Allineamento</label>
-              <input type="text" class="form-control" id="characterAlignment" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-          <button type="button" class="btn btn-primary" id="saveCharacter">Salva</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script src="src/js/Elements.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <script>
     var currentUserID = 0;
 
-    var paginaJS = "src/js/Dashboard.js"
+    var paginaJS = "src/js/Wizard.js"
 
     var c = document.createDocumentFragment();
     var newscript = document.createElement('script');
@@ -125,8 +164,8 @@
     newscript.src = paginaJS;
     
     newscript.onload = function() {
-        var dashboard = new Dashboard();
-        dashboard.mostraDashboard();
+        var wizard = new Wizard();
+        wizard.mostraWizard();
     };
 
     c.appendChild(newscript);

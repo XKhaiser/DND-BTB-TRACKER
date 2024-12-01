@@ -36,15 +36,11 @@ Dashboard.prototype.mostraPersonaggi = async function() {
         personaggi.forEach(function(personaggio) {
             var cardHtml = `
                 <div class="card">
-                    <div class="card-header">
-                        ${personaggio.name}
-                    </div>
+                    ${personaggio.immagine ? `<img src="${personaggio.immagine}" alt="${personaggio.name}" class="img-fluid" />` : ''}
                     <div class="card-body">
+                        <h5>${personaggio.name}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">${personaggio.class} - ${personaggio.race} - ${personaggio.alignment}</h6>
                         <p>${personaggio.descrizione || "Descrizione PG"}</p>
-                        ${personaggio.immagine ? `<img src="${personaggio.immagine}" alt="${personaggio.name}" class="img-fluid" />` : ''}
-                        ${personaggio.class ? `<p><strong>Classe:</strong> ${personaggio.class}</p>` : ''}
-                        ${personaggio.race ? `<p><strong>Razza:</strong> ${personaggio.race}</p>` : ''}
-                        ${personaggio.alignment ? `<p><strong>Allineamento:</strong> ${personaggio.alignment}</p>` : ''}
                     </div>
                 </div>
             `;
@@ -59,8 +55,7 @@ Dashboard.prototype.mostraPersonaggi = async function() {
             </div>
         `;
         htmlContent += addCardHtml;
-
-        $('#pg-list').append(htmlContent);
+        $('#pg-list').html(htmlContent);
 
         $('#addCharacterBtn').on('click', function() {
             _this.createCharacter()
@@ -83,6 +78,7 @@ Dashboard.prototype.createCharacter = function () {
       var characterClass = document.getElementById('characterClass').value.trim();
       var level = document.getElementById('characterLevel').value;
       var race = document.getElementById('characterRace').value.trim();
+      var alignment = document.getElementById('characterAlignment').value.trim();
   
       if (name && characterClass && level && race) {
         // Esegui azioni con i dati del personaggio (ad esempio, aggiungilo alla dashboard)
@@ -90,19 +86,33 @@ Dashboard.prototype.createCharacter = function () {
           name: name,
           class: characterClass,
           level: parseInt(level, 10),
-          race: race
-        });
-  
-        // Chiude la modale
-        modal.hide();
+          race: race,
+          alignment: alignment
+        }, modal);
       } else {
         alert("Per favore, compila tutti i campi!");
       }
     };
 };
 
-Dashboard.prototype.saveCharacter = function (character) {
+Dashboard.prototype.saveCharacter = async function (character, modal) {
     var _this = this;
 
     console.log(character)
+
+    try {
+        const response = await fetch('/action', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'createCharacter', character, currentUserID })
+        });
+  
+        const result = await response.json();
+
+        console.log(result);
+        _this.mostraPersonaggi();
+        modal.hide();
+      } catch (error) {
+        console.error('Errore:', error);
+      }
 }
