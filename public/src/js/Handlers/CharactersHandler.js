@@ -33,6 +33,7 @@ class CharacterHandler {
                     'race', c.race,
                     'class', c.class,
                     'level', c.level,
+                    'alignment', c.alignment,
                     'stats', jsonb_build_object(
                         'strength', COALESCE(s.strength, 0),
                         'dexterity', COALESCE(s.dexterity, 0),
@@ -64,22 +65,29 @@ class CharacterHandler {
     async createCharacter(characterData, currentUserID) {
         const client = await pool.connect();
         try {
-            const result = await client.query(
-                `
-                INSERT INTO characters (id, name, class, race, alignment, level, user_id)
-                VALUES ($1, $2, $3, $4, $5, $6, $7)
-                ON CONFLICT (id) 
-                DO UPDATE SET 
-                    name = EXCLUDED.name,
-                    class = EXCLUDED.class,
-                    race = EXCLUDED.race,
-                    alignment = EXCLUDED.alignment,
-                    level = EXCLUDED.level
-                WHERE characters.user_id = $7
-                RETURNING id
-                `,
-                [
-                    characterData.id || null,  // Se non c'è un id, sarà NULL (necessario per evitare errori)
+            const queryText = characterData.id 
+                ? `
+                    INSERT INTO characters (id, name, class, race, alignment, level, user_id)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    ON CONFLICT (id)
+                    DO UPDATE SET 
+                        name = EXCLUDED.name,
+                        class = EXCLUDED.class,
+                        race = EXCLUDED.race,
+                        alignment = EXCLUDED.alignment,
+                        level = EXCLUDED.level
+                    WHERE characters.user_id = $7
+                    RETURNING id
+                ` 
+                : `
+                    INSERT INTO characters (name, class, race, alignment, level, user_id)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    RETURNING id
+                `;
+
+            const values = characterData.id
+                ? [
+                    characterData.id,
                     characterData.name,
                     characterData.class,
                     characterData.race,
@@ -87,7 +95,15 @@ class CharacterHandler {
                     characterData.level,
                     currentUserID
                 ]
-            );
+                : [
+                    characterData.name,
+                    characterData.class,
+                    characterData.race,
+                    characterData.alignment,
+                    characterData.level,
+                    currentUserID
+                ];
+            const result = await client.query(queryText, values);
             return result.rows[0];
         } catch (error) {
             console.error('Error creating character:', error);

@@ -95,12 +95,14 @@ Wizard.prototype.createCharacter = async function (choicePg, id) {
       $('#characterRace').val(characterData.race);
       $('#characterAlignment').val(characterData.alignment || "Nessuno");
 
-      $('#characterStrength').val(characterData.strength || 8);
-      $('#characterDexterity').val(characterData.dexterity || 8);
-      $('#characterIntelligence').val(characterData.intelligence || 8);
-      $('#characterWisdom').val(characterData.wisdom || 8);
-      $('#characterConstitution').val(characterData.constitution || 8);
-      $('#characterCharisma').val(characterData.charisma || 8);
+      $('#characterStrength').val(characterData.stats.strength || 8);
+      $('#characterDexterity').val(characterData.stats.dexterity || 8);
+      $('#characterIntelligence').val(characterData.stats.intelligence || 8);
+      $('#characterWisdom').val(characterData.stats.wisdom || 8);
+      $('#characterConstitution').val(characterData.stats.constitution || 8);
+      $('#characterCharisma').val(characterData.stats.charisma || 8);
+
+      $("#createCharacterForm .btn-primary").html("Salva")
     } catch (error) {
       console.error('Errore:', error);
     }
@@ -184,7 +186,9 @@ Wizard.prototype.saveCharacter = async function (character, characterStats) {
         });
 
         const resultStats = await responseStats.json();
+        alert("Lista personaggi aggiornata con successo")
       } catch (error) {
         console.error('Errore:', error);
+        alert("Al momento non è possibile fare modifiche ai personaggi, riprova più tardi")
       }
 }
