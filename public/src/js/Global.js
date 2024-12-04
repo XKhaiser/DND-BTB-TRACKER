@@ -10,6 +10,8 @@ $(function() {
     }
 
     $("#userMenu > span").html(user.nome);
+
+    initNavbar();
 });
 
 checkLogin();
@@ -20,6 +22,13 @@ function checkLogin() {
             window.location = "/index.html";
         }
     }
+}
+
+function initNavbar() {
+    $("#btnDash").off("click").on("click", function () {
+        if ($(this).hasClass("dash")) return;
+        window.location = "/dashboard.html";
+    })
 }
 
 $("#logout").off("click").on("click", function() {
